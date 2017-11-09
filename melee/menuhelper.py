@@ -13,6 +13,18 @@ import math
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False, opponent=False):
+    if gamestate.frame >= 10:
+      if gamestate.frame == 10:
+        controller.empty_input()
+      elif gamestate.frame == 12:
+        controller.press_button(enums.Button.BUTTON_A)
+      elif gamestate.frame == 14:
+        controller.release_button(enums.Button.BUTTON_A)
+      elif gamestate.frame == 26 and opponent == False:
+        controller.press_button(enums.Button.BUTTON_START)
+      elif gamestate.frame == 38 and opponent == False:
+        controller.release_button(enums.Button.BUTTON_START)
+      return
     #Figure out where the character is on the select screen
     #NOTE: This assumes you have all characters unlocked
     #Positions will be totally wrong if something is not unlocked
@@ -139,6 +151,13 @@ def choosestage(stage, gamestate, controller):
     if gamestate.frame < 20:
         controller.empty_input()
         return
+
+    if gamestate.frame >= 50:
+      if gamestate.frame == 56:
+        controller.press_button(enums.Button.BUTTON_START)
+      elif gamestate.frame == 58:
+        controller.release_button(enums.Button.BUTTON_START)
+      return
     target_x, target_y = 0,0
     if stage == enums.Stage.BATTLEFIELD:
         target_x, target_y = 1,-9
