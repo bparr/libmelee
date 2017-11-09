@@ -94,6 +94,7 @@ class Controller:
             self.logger.log("Buttons Pressed", command, concat=True)
         self.current.button[button] = True
         self.pipe.write(command)
+        self.pipe.flush()
 
     def release_button(self, button):
         if not self.pipe:
@@ -103,6 +104,7 @@ class Controller:
             self.logger.log("Buttons Pressed", command, concat=True)
         self.current.button[button] = False
         self.pipe.write(command)
+        self.pipe.flush()
 
     def press_shoulder(self, button, amount):
         if not self.pipe:
@@ -115,6 +117,7 @@ class Controller:
         elif button == enums.Button.BUTTON_R:
             self.current.r_shoulder = amount
         self.pipe.write(command)
+        self.pipe.flush()
 
     def tilt_analog(self, button, x, y):
         if not self.pipe:
@@ -127,6 +130,7 @@ class Controller:
         if self.logger:
             self.logger.log("Buttons Pressed", command, concat=True)
         self.pipe.write(command)
+        self.pipe.flush()
 
     def empty_input(self):
         if not self.pipe:
@@ -166,6 +170,7 @@ class Controller:
         self.current.r_shoulder = 0
         #Send the presses to dolphin
         self.pipe.write(command)
+        self.pipe.flush()
         if self.logger:
             self.logger.log("Buttons Pressed", "Empty Input", concat=True)
 

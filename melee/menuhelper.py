@@ -12,12 +12,14 @@ import math
     start = Automatically start the match when it's ready
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
-def choosecharacter(character, gamestate, controller, swag=False, start=False):
+def choosecharacter(character, gamestate, controller, swag=False, start=False, opponent=False):
     #Figure out where the character is on the select screen
     #NOTE: This assumes you have all characters unlocked
     #Positions will be totally wrong if something is not unlocked
     ai_state = gamestate.ai_state
     opponent_state = gamestate.opponent_state
+    if opponent:
+      ai_state, opponent_state = opponent_state, ai_state
     row = character.value // 9
     column = character.value % 9
     #The random slot pushes the bottom row over a slot, so compensate for that

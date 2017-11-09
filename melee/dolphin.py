@@ -33,6 +33,11 @@ class Dolphin:
                 "You may need to restart Dolphin and this program in order for this to work. " \
                 "(You should only see this warning once)")
 
+        pipes_path2 = pipes_path
+        pipes_path2 += "Bot" + str(opponent_port)
+        if not os.path.exists(pipes_path2):
+            os.mkfifo(pipes_path2)
+
         pipes_path += "Bot" + str(ai_port)
         if not os.path.exists(pipes_path):
             os.mkfifo(pipes_path)
