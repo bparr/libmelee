@@ -155,12 +155,6 @@ def choosestage(stage, gamestate, controller):
         controller.empty_input()
         return
 
-    if gamestate.frame >= 50:
-      if gamestate.frame == 56:
-        controller.press_button(enums.Button.BUTTON_START)
-      elif gamestate.frame == 58:
-        controller.release_button(enums.Button.BUTTON_START)
-      return
     target_x, target_y = 0,0
     if stage == enums.Stage.BATTLEFIELD:
         target_x, target_y = 1,-9

@@ -114,11 +114,11 @@ class Dolphin:
         config = configparser.SafeConfigParser(allow_no_value=True)
         config.optionxform = str
         config.read(melee_config_path)
-        if not config.has_section("Gecko_Enabled"):
-            config.add_section("Gecko_Enabled")
-        config.set("Gecko_Enabled", "$Netplay Community Settings")
-        with open(melee_config_path, 'w') as dolphinfile:
-            config.write(dolphinfile)
+        #if not config.has_section("Gecko_Enabled"):
+        #    config.add_section("Gecko_Enabled")
+        #config.set("Gecko_Enabled", "$Netplay Community Settings")
+        #with open(melee_config_path, 'w') as dolphinfile:
+        #    config.write(dolphinfile)
 
     """Run dolphin-emu"""
     def run(self, render=True, iso_path=None, movie_path=None):
