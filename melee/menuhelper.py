@@ -13,16 +13,19 @@ import math
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False, opponent=False):
-    if gamestate.frame >= 10:
-      if gamestate.frame == 10:
+    if gamestate.frame >= 16:
+      if gamestate.frame == 16:
+        controller.tilt_analog(enums.Button.BUTTON_MAIN,
+                               1.0 if opponent else -1.0, 0.0)
+      elif gamestate.frame == 22:
         controller.empty_input()
-      elif gamestate.frame == 12:
+      elif gamestate.frame == 24:
         controller.press_button(enums.Button.BUTTON_A)
-      elif gamestate.frame == 14:
+      elif gamestate.frame == 26:
         controller.release_button(enums.Button.BUTTON_A)
-      elif gamestate.frame == 26 and opponent == False:
-        controller.press_button(enums.Button.BUTTON_START)
       elif gamestate.frame == 38 and opponent == False:
+        controller.press_button(enums.Button.BUTTON_START)
+      elif gamestate.frame == 50 and opponent == False:
         controller.release_button(enums.Button.BUTTON_START)
       return
     #Figure out where the character is on the select screen
