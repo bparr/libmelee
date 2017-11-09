@@ -117,7 +117,7 @@ class Dolphin:
 
     """Run dolphin-emu"""
     def run(self, render=True, iso_path=None, movie_path=None):
-        command = ["dolphin-emu"]
+        command = ["dolphin-emu-nogui"]
         if not render:
             #Use the "Null" renderer
             command.append("-v")
