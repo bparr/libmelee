@@ -14,8 +14,10 @@ import math
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False,
                     opponent=False, is_20xx=False, make_cpu=False):
-    if gamestate.frame >= 12 and is_20xx:
-      if gamestate.frame == 12:
+    if is_20xx:
+      if gamestate.frame < 12:
+        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
+      elif gamestate.frame == 12:
         controller.tilt_analog(enums.Button.BUTTON_MAIN,
                                1.0 if opponent else 0.0, 0.5)
       elif gamestate.frame == 18:
