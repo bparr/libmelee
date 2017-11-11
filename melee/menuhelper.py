@@ -13,46 +13,49 @@ import math
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False,
-                    is_port1=False, make_cpu=False):
+                    is_port1=False, make_cpu=False, is_20xx=False):
     # Ignoring character and sway and start in this hack for my project.
 
     if gamestate.frame < 12:
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
-    elif gamestate.frame == 12:
+    elif gamestate.frame == 12 and is_20xx:
+      # Wait a bit since 20xx cursors start higher so less up movement.
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
+    elif gamestate.frame == 30:
       controller.tilt_analog(enums.Button.BUTTON_MAIN,
                              1.0 if is_port1 else 0.0, 0.5)
-    elif gamestate.frame == 18:
+    elif gamestate.frame == 36:
       controller.empty_input()
       controller.press_button(enums.Button.BUTTON_A)
-    elif gamestate.frame == 19:
+    elif gamestate.frame == 37:
       controller.release_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 27:
+    elif make_cpu and gamestate.frame == 45:
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-    elif make_cpu and gamestate.frame == 39:
+    elif make_cpu and gamestate.frame == 57:
       controller.tilt_analog(enums.Button.BUTTON_MAIN,
                              0.0 if is_port1 else 1.0, 0.5)
-    elif make_cpu and gamestate.frame == 43 and not is_port1:
+    elif make_cpu and gamestate.frame == 61 and not is_port1:
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-    elif make_cpu and gamestate.frame == 45:
+    elif make_cpu and gamestate.frame == 63:
       controller.press_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 46:
+    elif make_cpu and gamestate.frame == 64:
       controller.release_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 47:
+    elif make_cpu and gamestate.frame == 65:
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-    elif make_cpu and gamestate.frame == 58:
+    elif make_cpu and gamestate.frame == 76:
       controller.press_button(enums.Button.BUTTON_A)
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
-    elif make_cpu and gamestate.frame == 59:
+    elif make_cpu and gamestate.frame == 77:
       controller.release_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 67:
+    elif make_cpu and gamestate.frame == 85:
       controller.empty_input()
       controller.press_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 68:
+    elif make_cpu and gamestate.frame == 86:
       controller.release_button(enums.Button.BUTTON_A)
-    elif gamestate.frame == 78 and is_port1 == False:
+    elif gamestate.frame == 96 and is_port1 == False:
       controller.empty_input()
       controller.press_button(enums.Button.BUTTON_START)
-    elif gamestate.frame == 79 and is_port1 == False:
+    elif gamestate.frame == 97 and is_port1 == False:
       controller.release_button(enums.Button.BUTTON_START)
     return
 
