@@ -13,49 +13,48 @@ import math
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False,
-                    opponent=False, is_20xx=False, make_cpu=False):
-    if is_20xx:
-      is_port1 = opponent
+                    is_port1=False, make_cpu=False):
+    # Ignoring character and sway and start in this hack for my project.
 
-      if gamestate.frame < 12:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
-      elif gamestate.frame == 12:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN,
-                               1.0 if is_port1 else 0.0, 0.5)
-      elif gamestate.frame == 18:
-        controller.empty_input()
-        controller.press_button(enums.Button.BUTTON_A)
-      elif gamestate.frame == 19:
-        controller.release_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 27:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-      elif make_cpu and gamestate.frame == 39:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN,
-                               0.0 if is_port1 else 1.0, 0.5)
-      elif make_cpu and gamestate.frame == 43 and not is_port1:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-      elif make_cpu and gamestate.frame == 45:
-        controller.press_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 46:
-        controller.release_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 47:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-      elif make_cpu and gamestate.frame == 58:
-        controller.press_button(enums.Button.BUTTON_A)
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
-      elif make_cpu and gamestate.frame == 59:
-        controller.release_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 67:
-        controller.empty_input()
-        controller.press_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 68:
-        controller.release_button(enums.Button.BUTTON_A)
-      elif gamestate.frame == 78 and is_port1 == False:
-        controller.empty_input()
-        controller.press_button(enums.Button.BUTTON_START)
-      elif gamestate.frame == 79 and is_port1 == False:
-        controller.release_button(enums.Button.BUTTON_START)
-      return
+    if gamestate.frame < 12:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
+    elif gamestate.frame == 12:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN,
+                             1.0 if is_port1 else 0.0, 0.5)
+    elif gamestate.frame == 18:
+      controller.empty_input()
+      controller.press_button(enums.Button.BUTTON_A)
+    elif gamestate.frame == 19:
+      controller.release_button(enums.Button.BUTTON_A)
+    elif make_cpu and gamestate.frame == 27:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
+    elif make_cpu and gamestate.frame == 39:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN,
+                             0.0 if is_port1 else 1.0, 0.5)
+    elif make_cpu and gamestate.frame == 43 and not is_port1:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
+    elif make_cpu and gamestate.frame == 45:
+      controller.press_button(enums.Button.BUTTON_A)
+    elif make_cpu and gamestate.frame == 46:
+      controller.release_button(enums.Button.BUTTON_A)
+    elif make_cpu and gamestate.frame == 47:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
+    elif make_cpu and gamestate.frame == 58:
+      controller.press_button(enums.Button.BUTTON_A)
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
+    elif make_cpu and gamestate.frame == 59:
+      controller.release_button(enums.Button.BUTTON_A)
+    elif make_cpu and gamestate.frame == 67:
+      controller.empty_input()
+      controller.press_button(enums.Button.BUTTON_A)
+    elif make_cpu and gamestate.frame == 68:
+      controller.release_button(enums.Button.BUTTON_A)
+    elif gamestate.frame == 78 and is_port1 == False:
+      controller.empty_input()
+      controller.press_button(enums.Button.BUTTON_START)
+    elif gamestate.frame == 79 and is_port1 == False:
+      controller.release_button(enums.Button.BUTTON_START)
+    return
 
 
 
@@ -65,7 +64,7 @@ def choosecharacter(character, gamestate, controller, swag=False, start=False,
     #Positions will be totally wrong if something is not unlocked
     ai_state = gamestate.ai_state
     opponent_state = gamestate.opponent_state
-    if opponent:
+    if is_port1:
       ai_state, opponent_state = opponent_state, ai_state
     row = character.value // 9
     column = character.value % 9
