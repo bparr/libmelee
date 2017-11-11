@@ -12,8 +12,8 @@ import math
     start = Automatically start the match when it's ready
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
-def choosecharacter(character, gamestate, controller, swag=False, start=False, opponent=False):
-    if gamestate.frame >= 16:
+def choosecharacter(character, gamestate, controller, swag=False, start=False, opponent=False, is_20xx=False):
+    if gamestate.frame >= 16 and is_20xx:
       if gamestate.frame == 16:
         controller.tilt_analog(enums.Button.BUTTON_MAIN,
                                1.0 if opponent else -1.0, 0.0)
