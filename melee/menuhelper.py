@@ -14,7 +14,7 @@ import math
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False,
                     is_port1=False, make_cpu=False, is_20xx=False):
-    # Ignoring character and sway and start in this hack for my project.
+    # Ignoring character and swag in this hack for my project.
 
     if gamestate.frame < 12:
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
@@ -52,10 +52,10 @@ def choosecharacter(character, gamestate, controller, swag=False, start=False,
       controller.press_button(enums.Button.BUTTON_A)
     elif make_cpu and gamestate.frame == 86:
       controller.release_button(enums.Button.BUTTON_A)
-    elif gamestate.frame == 96 and is_port1 == False:
+    elif gamestate.frame == 96 and start == True:
       controller.empty_input()
       controller.press_button(enums.Button.BUTTON_START)
-    elif gamestate.frame == 97 and is_port1 == False:
+    elif gamestate.frame == 97 and start == True:
       controller.release_button(enums.Button.BUTTON_START)
     return
 
