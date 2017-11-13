@@ -14,53 +14,35 @@ import math
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, controller, swag=False, start=False,
                     is_port1=False, make_cpu=False, is_20xx=False):
-    # Ignoring character and swag in this hack for my project.
 
-    if gamestate.frame < 12:
+    if is_20xx:
+      raise Exception('20XX character selection is not implemented yet.')
+
+    if not is_20xx and gamestate.frame < 18:
+      # 20xx cursors start higher.
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
-    elif gamestate.frame == 12 and is_20xx:
-      # Wait a bit since 20xx cursors start higher so less up movement.
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-    elif gamestate.frame == 30:
-      controller.tilt_analog(enums.Button.BUTTON_MAIN,
-                             1.0 if is_port1 else 0.0, 0.5)
-    elif gamestate.frame == 36:
+      return
+    if gamestate.frame == 18:
       controller.empty_input()
-      controller.press_button(enums.Button.BUTTON_A)
-    elif gamestate.frame == 37:
-      controller.release_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 45:
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-    elif make_cpu and gamestate.frame == 57:
-      controller.tilt_analog(enums.Button.BUTTON_MAIN,
-                             0.0 if is_port1 else 1.0, 0.5)
-    elif make_cpu and gamestate.frame == 61 and not is_port1:
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-    elif make_cpu and gamestate.frame == 63:
-      controller.press_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 64:
-      controller.release_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 65:
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-    elif make_cpu and gamestate.frame == 76:
-      controller.press_button(enums.Button.BUTTON_A)
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
-    elif make_cpu and gamestate.frame == 77:
-      controller.release_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 85:
-      controller.empty_input()
-      controller.press_button(enums.Button.BUTTON_A)
-    elif make_cpu and gamestate.frame == 86:
-      controller.release_button(enums.Button.BUTTON_A)
-    elif gamestate.frame == 96 and start == True:
-      controller.empty_input()
-      controller.press_button(enums.Button.BUTTON_START)
-    elif gamestate.frame == 97 and start == True:
-      controller.release_button(enums.Button.BUTTON_START)
-    return
 
-
-
+    if make_cpu and gamestate.frame < 44:
+      if gamestate.frame == 18 or gamestate.frame == 20:
+        controller.press_button(enums.Button.BUTTON_A)
+      elif gamestate.frame == 19 or gamestate.frame == 21:
+        controller.empty_input()
+      elif gamestate.frame == 22:
+        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
+      elif make_cpu and gamestate.frame == 33:
+        controller.press_button(enums.Button.BUTTON_A)
+        controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
+      elif make_cpu and gamestate.frame == 34:
+        controller.release_button(enums.Button.BUTTON_A)
+      elif make_cpu and gamestate.frame == 42:
+        controller.empty_input()
+        controller.press_button(enums.Button.BUTTON_A)
+      elif make_cpu and gamestate.frame == 43:
+        controller.release_button(enums.Button.BUTTON_A)
+      return
 
     #Figure out where the character is on the select screen
     #NOTE: This assumes you have all characters unlocked
