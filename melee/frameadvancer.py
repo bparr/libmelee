@@ -68,9 +68,11 @@ class _FrameAdvancer(object):
             pass
 
     # If in a match, then spams Start+A+L+R until out of match.
+    # Returns when on first frame of next match.
     def reset_match(self):
         while not self._step_helper(resetting_match=True):
             pass
+        self.step_match_frame()
 
     def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
