@@ -4,15 +4,20 @@ import argparse
 import signal
 import sys
 
-#This example program demonstrates how to use the Melee API to run dolphin programatically,
-#   setup controllers, and send button presses over to dolphin
-
 def check_port(value):
     ivalue = int(value)
     if ivalue < 1 or ivalue > 4:
          raise argparse.ArgumentTypeError("%s is an invalid controller port. \
          Must be 1, 2, 3, or 4." % value)
     return ivalue
+
+
+# TODO ensure maintain four space tabs.
+def newGameFrameAdvancer(port, opponent_port, iso_path):
+    port = check_port(port)
+    opponent_port = check_port(opponent_port)
+    # TODO finish implementing.
+
 
 chain = None
 
@@ -23,38 +28,15 @@ parser.add_argument('--port', '-p', type=check_port,
 parser.add_argument('--opponent', '-o', type=check_port,
                     help='The controller port the opponent will play on',
                     default=1)
-parser.add_argument('--live', '-l',
-                    help='The opponent is playing live with a GCN Adapter',
-                    default=True)
-parser.add_argument('--debug', '-d', action='store_true',
-                    help='Debug mode. Creates a CSV of all game state')
-parser.add_argument('--framerecord', '-r', default=False, action='store_true',
-                    help='(DEVELOPMENT ONLY) Records frame data from the match, stores into framedata.csv.')
 parser.add_argument('--iso_path', required=True,
                     help='Path to SSBM v1.02 ISO.')
 
 args = parser.parse_args()
 
-log = None
-if args.debug:
-    log = melee.logger.Logger()
-
-framedata = melee.framedata.FrameData(args.framerecord)
-
-#Options here are:
-#   "Standard" input is what dolphin calls the type of input that we use
-#       for named pipe (bot) input
-#   GCN_ADAPTER will use your WiiU adapter for live human-controlled play
-#   UNPLUGGED is pretty obvious what it means
-opponent_type = melee.enums.ControllerType.UNPLUGGED
-if args.live:
-    opponent_type = melee.enums.ControllerType.STANDARD
-
 #Create our Dolphin object. This will be the primary object that we will interface with
 dolphin = melee.dolphin.Dolphin(ai_port=args.port,
                                 opponent_port=args.opponent,
-                                opponent_type=opponent_type,
-                                logger=log)
+                                opponent_type=melee.enums.ControllerType.STANDARD)
 #Create our GameState object for the dolphin instance
 gamestate = melee.gamestate.GameState(dolphin)
 #Create our Controller object that we can press buttons on
@@ -63,13 +45,7 @@ opponent_controller = melee.controller.Controller(port=args.opponent, dolphin=do
 
 def signal_handler(signal, frame):
     dolphin.terminate()
-    if args.debug:
-        log.writelog()
-        print("") #because the ^C will be on the terminal
-        print("Log file created: " + log.filename)
     print("Shutting down cleanly...")
-    if args.framerecord:
-        framedata.saverecording()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -94,15 +70,10 @@ while True:
 
     #What menu are we in?
     if gamestate.menu_state in [melee.enums.Menu.IN_GAME, melee.enums.Menu.SUDDEN_DEATH]:
-        if args.framerecord:
-            framedata.recordframe(gamestate)
         #XXX: This is where your AI does all of its stuff!
         #This line will get hit once per frame, so here is where you read
         #   in the gamestate and decide what buttons to push on the controller
-        if args.framerecord:
-            melee.techskill.upsmashes(ai_state=gamestate.ai_state, controller=controller)
-        else:
-            melee.techskill.multishine(ai_state=gamestate.ai_state, controller=controller)
+        melee.techskill.multishine(ai_state=gamestate.ai_state, controller=controller)
     #If we're at the character select screen, choose our character
     elif gamestate.menu_state == melee.enums.Menu.CHARACTER_SELECT:
         melee.menuhelper.choosecharacter(character=melee.enums.Character.FOX,
@@ -135,6 +106,4 @@ while True:
     #Flush any button presses queued up
     controller.flush()
     opponent_controller.flush()
-    if log:
-        log.logframe(gamestate)
-        log.writeframe()
+
