@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 import melee
-import argparse
 import signal
 import sys
 
 def check_port(value):
     ivalue = int(value)
     if ivalue < 1 or ivalue > 4:
-         raise argparse.ArgumentTypeError("%s is an invalid controller port. \
+         raise Exception("%s is an invalid controller port. \
          Must be 1, 2, 3, or 4." % value)
     return ivalue
 
@@ -34,7 +33,7 @@ def newGameFrameAdvancer(port, opponent_port, iso_path):
     # TODO better handle multiple dolphin instances? As of now, a previous
     #      dolphin will have its signal handler removed.
     signal.signal(signal.SIGINT, signal_handler)
-    dolphin.run(render=True, iso_path=args.iso_path)
+    dolphin.run(render=True, iso_path=iso_path)
     #Plug our controller in
     #   Due to how named pipes work, this has to come AFTER running dolphin
     controller.connect()
@@ -101,22 +100,4 @@ class _GameFrameAdvancer(object):
                                         gamestate=gamestate,
                                         controller=self._controller)
         return False
-
-
-parser = argparse.ArgumentParser(description='Example of libmelee in action')
-parser.add_argument('--port', '-p', type=check_port,
-                    help='The controller port your AI will play on',
-                    default=2)
-parser.add_argument('--opponent', '-o', type=check_port,
-                    help='The controller port the opponent will play on',
-                    default=1)
-parser.add_argument('--iso_path', required=True,
-                    help='Path to SSBM v1.02 ISO.')
-
-args = parser.parse_args()
-
-game_state_advancer = newGameFrameAdvancer(args.port, args.opponent,
-                                           args.iso_path)
-while True:
-    game_state_advancer.step()
 
