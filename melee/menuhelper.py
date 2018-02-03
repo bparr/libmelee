@@ -219,6 +219,20 @@ def skippostgame(controller):
     else:
         controller.release_button(enums.Button.BUTTON_START)
 
+
+def resetmatch(controller):
+    #Alternate pressing Start+A+L+R and letting go.
+    if controller.prev.button[enums.Button.BUTTON_START] == False:
+        controller.press_button(enums.Button.BUTTON_START)
+        controller.press_button(enums.Button.BUTTON_A)
+        # TODO switch to controller.press_shoulder?
+        controller.press_button(enums.Button.BUTTON_L)
+        controller.press_button(enums.Button.BUTTON_R)
+    else:
+        controller.empty_input()
+
+
+
 """Switch a given player's controller to be of the given state
 WARNING: There's a condition on this you need to know. The way controllers work
     in Melee, if a controller is plugged in, only that player can make the status
