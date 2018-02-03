@@ -4,6 +4,7 @@ Currently only works on Linux/OSX
 """
 from melee.dolphin import Dolphin
 from melee.logger import Logger
+from melee.frameadvancer import getFrameAdvancer
 from melee.gamestate import GameState
 from melee.enums import Stage, Menu, Character, Button, Action, ProjectileSubtype
 from melee.controller import Controller, ControllerState

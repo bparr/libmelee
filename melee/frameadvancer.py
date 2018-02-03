@@ -15,7 +15,7 @@ def check_port(value):
 # TODO ensure opponent --> opponent_port.
 # TODO note that currently only works as a singleton. Or just rename to
 #      getGameFrameAdvancer and hand code memoization. Make sure to store.
-def newGameFrameAdvancer(port, opponent_port, iso_path):
+def getFrameAdvancer(port, opponent_port, iso_path):
     port = check_port(port)
     opponent_port = check_port(opponent_port)
     opponent_type = melee.enums.ControllerType.STANDARD
@@ -38,11 +38,11 @@ def newGameFrameAdvancer(port, opponent_port, iso_path):
     #   Due to how named pipes work, this has to come AFTER running dolphin
     controller.connect()
     opponent_controller.connect()
-    return _GameFrameAdvancer(gamestate, dolphin, controller,
+    return _FrameAdvancer(gamestate, dolphin, controller,
                               opponent_controller)
 
 
-class _GameFrameAdvancer(object):
+class _FrameAdvancer(object):
     def __init__(self, gamestate, dolphin, controller, opponent_controller):
         self._gamestate = gamestate
         self._dolphin = dolphin
@@ -50,7 +50,8 @@ class _GameFrameAdvancer(object):
         self._opponent_controller = opponent_controller
         self._first_match = True
 
-    def step(self):
+    # Note: May step multiple frames to get into a match.
+    def step_match_frame(self):
         done_stepping = False
         while not done_stepping:
             done_stepping = self._step_helper()
@@ -58,8 +59,8 @@ class _GameFrameAdvancer(object):
             self._opponent_controller.flush()
 
     def _step_helper(self):
-        gamestate = self._gamestate  # TODO inline?
-        dolphin = self._dolphin      # TODO inline?
+        gamestate = self._gamestate
+        dolphin = self._dolphin
         gamestate.step()
         if(gamestate.processingtime * 1000 > 12):
             print("WARNING: Last frame took " + str(gamestate.processingtime*1000) + "ms to process.")
