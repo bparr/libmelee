@@ -52,8 +52,18 @@ class _FrameAdvancer(object):
         self._opponent_controller = opponent_controller
         self._first_match = True
 
+    def get_game_state(self):
+        return self._gamestate
+
+    def get_controller(self):
+        return self._controller
+
     # Note: May step multiple frames to get into a match.
     def step_match_frame(self):
+        # Ensure any inputs by user are flushed.
+        self._controller.flush()
+        self._opponent_controller.flush()
+
         done_stepping = False
         while not done_stepping:
             done_stepping = self._step_helper()
@@ -69,8 +79,6 @@ class _FrameAdvancer(object):
 
         #What menu are we in?
         if gamestate.menu_state in [melee.enums.Menu.IN_GAME, melee.enums.Menu.SUDDEN_DEATH]:
-            # TODO remove.
-            melee.techskill.multishine(ai_state=gamestate.ai_state, controller=self._controller)
             return True
 
         #If we're at the character select screen, choose our character
