@@ -88,6 +88,10 @@ class GameState:
         return thelist
 
     def step(self):
+        # Do not warn on first frame.
+        if self.frametimestamp == 0.0:
+            self.frametimestamp = time.time()
+
         # How long did it take to get here from last time?
         self.processingtime = time.time() - self.frametimestamp
         for mem_update in self:
