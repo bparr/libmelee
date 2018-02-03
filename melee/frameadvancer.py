@@ -64,13 +64,15 @@ class _FrameAdvancer(object):
         self._controller.flush()
         self._opponent_controller.flush()
 
-        done_stepping = False
-        while not done_stepping:
-            done_stepping = self._step_helper()
-            self._controller.flush()
-            self._opponent_controller.flush()
+        while not self._step_helper():
+            pass
 
-    def _step_helper(self):
+    # If in a match, then spams Start+A+L+R until out of match.
+    def reset_match(self):
+        while not self._step_helper(resetting_match=True):
+            pass
+
+    def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
         dolphin = self._dolphin
         gamestate.step()
@@ -79,6 +81,10 @@ class _FrameAdvancer(object):
 
         #What menu are we in?
         if gamestate.menu_state in [melee.enums.Menu.IN_GAME, melee.enums.Menu.SUDDEN_DEATH]:
+            if resetting_match:
+                melee.menuhelper.resetmatch(self._controller)
+                self._controller.flush()
+                return False
             return True
 
         #If we're at the character select screen, choose our character
@@ -110,5 +116,8 @@ class _FrameAdvancer(object):
             melee.menuhelper.choosestage(stage=melee.enums.Stage.FINAL_DESTINATION,
                                         gamestate=gamestate,
                                         controller=self._controller)
-        return False
+
+        self._controller.flush()
+        self._opponent_controller.flush()
+        return resetting_match
 
