@@ -11,11 +11,14 @@ def check_port(value):
     return ivalue
 
 
-# TODO ensure maintain four space tabs.
-# TODO ensure opponent --> opponent_port.
-# TODO note that currently only works as a singleton. Or just rename to
-#      getGameFrameAdvancer and hand code memoization. Make sure to store.
+_frame_advancer = None
+
+# Singleton factory. Multiple calls will just return result from first call.
 def getFrameAdvancer(port, opponent_port, iso_path):
+    global _frame_advancer
+    if _frame_advancer is not None:
+        return _frame_advancer
+
     port = check_port(port)
     opponent_port = check_port(opponent_port)
     opponent_type = melee.enums.ControllerType.STANDARD
@@ -38,8 +41,9 @@ def getFrameAdvancer(port, opponent_port, iso_path):
     #   Due to how named pipes work, this has to come AFTER running dolphin
     controller.connect()
     opponent_controller.connect()
-    return _FrameAdvancer(gamestate, dolphin, controller,
-                              opponent_controller)
+    _frame_advancer =  _FrameAdvancer(gamestate, dolphin, controller,
+                                      opponent_controller)
+    return _frame_advancer
 
 
 class _FrameAdvancer(object):
