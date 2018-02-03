@@ -33,8 +33,6 @@ def getFrameAdvancer(port, opponent_port, iso_path):
         print("Shutting down cleanly...")
         sys.exit(0)
 
-    # TODO better handle multiple dolphin instances? As of now, a previous
-    #      dolphin will have its signal handler removed.
     signal.signal(signal.SIGINT, signal_handler)
     dolphin.run(render=True, iso_path=iso_path)
     #Plug our controller in
