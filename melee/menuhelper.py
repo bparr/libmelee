@@ -13,7 +13,7 @@ import math
         NOTE: All controller cursors must be above the character level for this
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, port, opponent_port, controller, swag=False, start=False,
-                    is_port1=False, make_cpu=False, is_20xx=False):
+                    make_cpu=False, is_20xx=False):
 
     #Figure out where the character is on the select screen
     #NOTE: This assumes you have all characters unlocked

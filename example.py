@@ -30,6 +30,8 @@ parser.add_argument('--debug', '-d', action='store_true',
                     help='Debug mode. Creates a CSV of all game state')
 parser.add_argument('--framerecord', '-r', default=False, action='store_true',
                     help='(DEVELOPMENT ONLY) Records frame data from the match, stores into framedata.csv.')
+parser.add_argument('--iso_path', required=True,
+                    help='Path to SSBM v1.02 ISO.')
 
 args = parser.parse_args()
 
@@ -46,7 +48,7 @@ framedata = melee.framedata.FrameData(args.framerecord)
 #   UNPLUGGED is pretty obvious what it means
 opponent_type = melee.enums.ControllerType.UNPLUGGED
 if args.live:
-    opponent_type = melee.enums.ControllerType.GCN_ADAPTER
+    opponent_type = melee.enums.ControllerType.STANDARD
 
 #Create our Dolphin object. This will be the primary object that we will interface with
 dolphin = melee.dolphin.Dolphin(ai_port=args.port,
@@ -57,6 +59,7 @@ dolphin = melee.dolphin.Dolphin(ai_port=args.port,
 gamestate = melee.gamestate.GameState(dolphin)
 #Create our Controller object that we can press buttons on
 controller = melee.controller.Controller(port=args.port, dolphin=dolphin)
+opponent_controller = melee.controller.Controller(port=args.opponent, dolphin=dolphin)
 
 def signal_handler(signal, frame):
     dolphin.terminate()
@@ -72,13 +75,15 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 #Run dolphin and render the output
-dolphin.run(render=True)
+dolphin.run(render=True, iso_path=args.iso_path)
 
 #Plug our controller in
 #   Due to how named pipes work, this has to come AFTER running dolphin
 #   NOTE: If you're loading a movie file, don't connect the controller,
 #   dolphin will hang waiting for input and never receive it
 controller.connect()
+opponent_controller.connect()
+first_match = True
 
 #Main loop
 while True:
@@ -105,18 +110,31 @@ while True:
                                         port=args.port,
                                         opponent_port=args.opponent,
                                         controller=controller,
-                                        swag=True,
+                                        swag=False,
                                         start=True)
+        if first_match:
+          # Only set up opponent on first match. Otherwise, will switch back
+          # to non-cpu player, for example.
+          melee.menuhelper.choosecharacter(character=melee.enums.Character.MARTH,
+                                          gamestate=gamestate,
+                                          port=args.opponent,
+                                          opponent_port=args.port,
+                                          controller=opponent_controller,
+                                          make_cpu=True,
+                                          swag=False,
+                                          start=True)
     #If we're at the postgame scores screen, spam START
     elif gamestate.menu_state == melee.enums.Menu.POSTGAME_SCORES:
+        first_match = False
         melee.menuhelper.skippostgame(controller=controller)
     #If we're at the stage select screen, choose a stage
     elif gamestate.menu_state == melee.enums.Menu.STAGE_SELECT:
-        melee.menuhelper.choosestage(stage=melee.enums.Stage.POKEMON_STADIUM,
+        melee.menuhelper.choosestage(stage=melee.enums.Stage.FINAL_DESTINATION,
                                     gamestate=gamestate,
                                     controller=controller)
     #Flush any button presses queued up
     controller.flush()
+    opponent_controller.flush()
     if log:
         log.logframe(gamestate)
         log.writeframe()
