@@ -170,6 +170,7 @@ class GameState:
                     self.player[i].hitstun_frames_left = self.player[i+4].hitstun_frames_left
                     self.player[i].charging_smash = self.player[i+4].charging_smash
                     self.player[i].jumps_left = self.player[i+4].jumps_left
+                    self.player[i].shield_size = self.player[i+4].shield_size
                     self.player[i].on_ground = self.player[i+4].on_ground
                     self.player[i].speed_air_x_self = self.player[i+4].speed_air_x_self
                     self.player[i].speed_y_self = self.player[i+4].speed_y_self
@@ -306,6 +307,9 @@ class GameState:
             # Key error will be expected when we first start
             except KeyError:
                 self.player[player_int].jumps_left = 1
+            return False
+        if label == "shield_size":
+            self.player[player_int].shield_size = unpack('<f', mem_update[1])[0]
             return False
         if label == "on_ground":
             temp = unpack('<I', mem_update[1])[0]
@@ -491,6 +495,7 @@ class PlayerState:
     hitstun_frames_left = 0
     charging_smash = 0
     jumps_left = 0
+    shield_size = 0
     on_ground = True
     speed_air_x_self = 0
     speed_y_self = 0
@@ -547,6 +552,7 @@ class PlayerState:
         thelist.append(self.hitstun_frames_left)
         thelist.append(int(self.charging_smash))
         thelist.append(self.jumps_left)
+        thelist.append(self.shield_size)
         thelist.append(int(self.on_ground))
         #We're combining speeds here for simplicity's sake
         thelist.append(self.speed_air_x_self + self.speed_x_attack + self.speed_ground_x_self)
