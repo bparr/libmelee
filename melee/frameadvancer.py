@@ -58,6 +58,10 @@ class _FrameAdvancer(object):
     def get_controller(self):
         return self._controller
 
+    def terminate_dolphin(self):
+        print('Terminating dolphin.')
+        self._dolphin.terminate()
+
     # Note: May step multiple frames to get into a match.
     def step_match_frame(self):
         # Ensure any inputs by user are flushed.
