@@ -14,7 +14,8 @@ def check_port(value):
 _frame_advancer = None
 
 # Singleton factory. Multiple calls will just return result from first call.
-def getFrameAdvancer(port, opponent_port, iso_path):
+def getFrameAdvancer(port, opponent_port, iso_path,
+                     unlimited_emulation_speed=False):
     global _frame_advancer
     if _frame_advancer is not None:
         return _frame_advancer
@@ -22,8 +23,9 @@ def getFrameAdvancer(port, opponent_port, iso_path):
     port = check_port(port)
     opponent_port = check_port(opponent_port)
     opponent_type = melee.enums.ControllerType.STANDARD
-    dolphin = melee.dolphin.Dolphin(ai_port=port, opponent_port=opponent_port,
-                                    opponent_type=opponent_type)
+    dolphin = melee.dolphin.Dolphin(
+        ai_port=port, opponent_port=opponent_port, opponent_type=opponent_type,
+        unlimited_emulation_speed=unlimited_emulation_speed)
     gamestate = melee.gamestate.GameState(dolphin)
     controller = melee.controller.Controller(port=port, dolphin=dolphin)
     opponent_controller = melee.controller.Controller(port=opponent_port,
