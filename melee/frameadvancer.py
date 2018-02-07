@@ -76,9 +76,28 @@ class _FrameAdvancer(object):
     # If in a match, then spams Start+A+L+R until out of match.
     # Returns when on first frame of next match.
     def reset_match(self):
+        # TODO remove this debugging once understand why dolphin is hanging.
+        count = 0
         while not self._step_helper(resetting_match=True):
-            pass
-        self.step_match_frame()
+            count += 1
+            if count % 1000 == 0 and count < 9000:
+              print('Unexpectedly long reset: ', self._gamestate.menu_state)
+              sys.stdout.flush()
+            if count > 9000:
+              self._dolphin.terminate()
+              raise Exception('Way too long reseting match')
+
+        self._controller.flush()
+        self._opponent_controller.flush()
+
+        while not self._step_helper():
+            count += 1
+            if count % 1000 == 0 and count < 9000:
+              print('Unexpectedly long reset: ', self._gamestate.menu_state)
+              sys.stdout.flush()
+            if count > 9000:
+              self._dolphin.terminate()
+              raise Exception('Way too long reseting match')
 
     def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
@@ -86,6 +105,7 @@ class _FrameAdvancer(object):
         gamestate.step()
         if(gamestate.processingtime * 1000 > 12):
             print("WARNING: Last frame took " + str(gamestate.processingtime*1000) + "ms to process.")
+            sys.stdout.flush()
 
         #What menu are we in?
         if gamestate.menu_state in [melee.enums.Menu.IN_GAME, melee.enums.Menu.SUDDEN_DEATH]:
