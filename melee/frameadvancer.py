@@ -66,21 +66,28 @@ class _FrameAdvancer(object):
         print('Terminating dolphin.')
         self._dolphin.terminate()
 
-    # Note: May step multiple frames to get into a match.
+    # Steps Melee once. Returns True iff in a match after the step.
     def step_match_frame(self):
         # Ensure any inputs by user are flushed.
         self._controller.flush()
         self._opponent_controller.flush()
-
-        while not self._step_helper():
-            pass
+        return self._step_helper()
 
     # If in a match, then spams Start+A+L+R until out of match.
     # Returns when on first frame of next match.
     def reset_match(self):
+        self._controller.empty_input()
+        self._controller.flush()
+        self._opponent_controller.empty_input()
+        self._opponent_controller.flush()
+
+        # Get to first frame outside of a match.
         while not self._step_helper(resetting_match=True):
             pass
-        self.step_match_frame()
+
+        # Then get to first frame inside of a match.
+        while not self._step_helper():
+            pass
 
     def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
