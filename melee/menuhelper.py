@@ -118,6 +118,8 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
     if (ai_state.character == character) and ai_state.coin_down:
         if start and gamestate.ready_to_start and \
             controller.prev.button[enums.Button.BUTTON_START] == False:
+            print('Pressing start.')
+            sys.stdout.flush()
             controller.press_button(enums.Button.BUTTON_START)
             return
         else:
@@ -218,11 +220,13 @@ def choosestage(stage, gamestate, controller):
 
 """Spam the start button"""
 def skippostgame(controller):
-    #Alternate pressing start and letting go
-    if controller.prev.button[enums.Button.BUTTON_START] == False:
+    # Alternate pressing start and letting go.
+    # Ensure all inputs are cleared before leaving this post game menu state
+    # by always clearing inputs.
+    press_start = (controller.prev.button[enums.Button.BUTTON_START] == False)
+    controller.empty_input()
+    if press_start:
         controller.press_button(enums.Button.BUTTON_START)
-    else:
-        controller.release_button(enums.Button.BUTTON_START)
 
 
 def resetmatch(controller):
