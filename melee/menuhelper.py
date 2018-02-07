@@ -2,7 +2,6 @@
     cumbersome to do on your own."""
 from melee import enums
 import math
-import sys
 
 """Choose a character from the character select menu
     Intended to be called each frame while in the character select menu
@@ -111,15 +110,9 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
         return
 
     #If character is selected, and we're in of the area, and coin is down, then we're good
-    if ai_state.character == character:
-        print('Character is correct:', ai_state.coin_down, start, gamestate.ready_to_start, controller.prev.button[enums.Button.BUTTON_START])
-        sys.stdout.flush()
-
     if (ai_state.character == character) and ai_state.coin_down:
         if start and gamestate.ready_to_start and \
             controller.prev.button[enums.Button.BUTTON_START] == False:
-            print('Pressing start.')
-            sys.stdout.flush()
             controller.press_button(enums.Button.BUTTON_START)
             return
         else:

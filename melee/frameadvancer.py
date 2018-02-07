@@ -73,29 +73,12 @@ class _FrameAdvancer(object):
         while not self._step_helper():
             pass
 
-    def _debug_why_hanging(self, count):
-        if count % 1000 == 0 and count < 9000:
-          print('Unexpectedly long reset: ', self._gamestate.menu_state)
-          sys.stdout.flush()
-        if count > 9000:
-          self._dolphin.terminate()
-          raise Exception('Way too long reseting match')
-
     # If in a match, then spams Start+A+L+R until out of match.
     # Returns when on first frame of next match.
     def reset_match(self):
-        # TODO remove this debugging once understand why dolphin is hanging.
-        count = 0
         while not self._step_helper(resetting_match=True):
-            count += 1
-            self._debug_why_hanging(count)
-
-        self._controller.flush()
-        self._opponent_controller.flush()
-
-        while not self._step_helper():
-            count += 1
-            self._debug_why_hanging(count)
+            pass
+        self.step_match_frame()
 
     def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
