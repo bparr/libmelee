@@ -208,7 +208,7 @@ class GameState:
             return False
         if label == "menu_state":
             self.menu_state = unpack('<I', mem_update[1])[0]
-            self.menu_state &= 0x000000ff
+            self.menu_state &= 0x0000000f
             self.menu_state = enums.Menu(self.menu_state)
             return False
         #Player variables
