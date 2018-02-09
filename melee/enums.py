@@ -1,5 +1,7 @@
+import enum
 from enum import Enum
 
+@enum.unique
 class Stage(Enum):
     NO_STAGE = 0
     FINAL_DESTINATION = 0x19
@@ -10,6 +12,7 @@ class Stage(Enum):
     YOSHIS_STORY = 0x6
     RANDOM_STAGE = 0x1D #not technically a stage, but it's useful to call it one
 
+@enum.unique
 class Menu(Enum):
     CHARACTER_SELECT = 0
     STAGE_SELECT = 1
@@ -17,22 +20,26 @@ class Menu(Enum):
     SUDDEN_DEATH = 3
     POSTGAME_SCORES = 4
 
+@enum.unique
 class ControllerStatus(Enum):
     CONTROLLER_HUMAN = 0
     CONTROLLER_CPU = 1
     CONTROLLER_UNPLUGGED = 3
 
+@enum.unique
 class ControllerType(Enum):
     STANDARD = "6"
     GCN_ADAPTER = "12"
     UNPLUGGED = "0"
 
+@enum.unique
 class AttackState(Enum):
     WINDUP = 0
     ATTACKING = 1
     COOLDOWN = 2
     NOT_ATTACKING = 3
 
+@enum.unique
 class Character(Enum):
     DOC = 0x00
     MARIO = 0x01
@@ -62,6 +69,7 @@ class Character(Enum):
     SHEIK = 0x42 # We added this
     UNKNOWN_CHARACTER = 0xff
 
+@enum.unique
 class Button(Enum):
     BUTTON_A = "A"
     BUTTON_B = "B"
@@ -79,6 +87,7 @@ class Button(Enum):
     BUTTON_MAIN = "MAIN"
     BUTTON_C = "C"
 
+@enum.unique
 class Action(Enum):
     DEAD_DOWN = 0x0
     DEAD_LEFT = 0x1
@@ -304,30 +313,17 @@ class Action(Enum):
     SWORD_DANCE_4_HIGH_AIR = 0x16c
     SWORD_DANCE_4_MID_AIR = 0x16d
     SWORD_DANCE_4_LOW_AIR = 0x16e
-    FOX_ILLUSION_START = 0x15e
-    FOX_ILLUSION = 0x15f
-    FOX_ILLUSION_SHORTENED = 0x160
-    FIREFOX_WAIT_GROUND = 0x161 #Firefox wait on the ground
-    FIREFOX_WAIT_AIR = 0x162 #Firefox wait in the air
-    FIREFOX_GROUND = 0x163 #Firefox on the ground
-    FIREFOX_AIR = 0x164 #Firefox in the air
-    DOWN_B_GROUND_START = 0x168
-    DOWN_B_GROUND = 0x169
-    SHINE_TURN = 0x16c
-    DOWN_B_STUN = 0x16d #Fox is stunned in these frames
-    DOWN_B_AIR = 0x16e
     UP_B_GROUND = 0x16f
     SHINE_RELEASE_AIR = 0x170
-    UP_B_AIR = 0x170    #The upswing of the UP-B. (At least for marth)
     MARTH_COUNTER = 0x171
     PARASOL_FALLING = 0x172
     MARTH_COUNTER_FALLING = 0x173
-    NESS_SHEILD_START = 0x174
     NESS_SHEILD = 0x174
     NESS_SHEILD_AIR = 0x175
     NESS_SHEILD_AIR_END = 0x177
     UNKNOWN_ANIMATION = 0xffff
 
+@enum.unique
 class ProjectileSubtype(Enum):
     BOB_OMB = 0x06 # Bob-omb (BombHei)
     MR_SATURN = 0x07 # Mr. Saturn (Dosei)
