@@ -127,11 +127,11 @@ class _FrameAdvancer(object):
                                               start=True)
         #If we're at the postgame scores screen, spam START
         elif gamestate.menu_state == melee.enums.Menu.POSTGAME_SCORES:
-            self._first_match = False
             melee.menuhelper.skippostgame(controller=self._controller)
             melee.menuhelper.skippostgame(controller=self._opponent_controller)
         #If we're at the stage select screen, choose a stage
         elif gamestate.menu_state == melee.enums.Menu.STAGE_SELECT:
+            self._first_match = False
             melee.menuhelper.choosestage(stage=melee.enums.Stage.FINAL_DESTINATION,
                                         gamestate=gamestate,
                                         controller=self._controller)
