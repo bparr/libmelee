@@ -1,7 +1,19 @@
 #!/usr/bin/python3
+import enum
 import melee
 import signal
 import sys
+
+
+@enum.unique
+class Opponent(enum.Enum):
+  HUMAN = 'human'
+  CPU = 'cpu'
+  BOT = 'bot'
+
+  def __str__(self):
+    return self.value
+
 
 def check_port(value):
     ivalue = int(value)
@@ -15,15 +27,17 @@ _frame_advancer = None
 
 # Singleton factory. Multiple calls will just return result from first call.
 def getFrameAdvancer(port, opponent_port, iso_path,
-                     unlimited_emulation_speed=False, cpu_opponent=True):
+                     unlimited_emulation_speed=False,
+                     opponent=Opponent.CPU):
     global _frame_advancer
     if _frame_advancer is not None:
         return _frame_advancer
 
     port = check_port(port)
     opponent_port = check_port(opponent_port)
+    opponent = Opponent(opponent)  # Handle enum entry or enum entry value.
     opponent_type = melee.enums.ControllerType.STANDARD
-    if not cpu_opponent:
+    if opponent == Opponent.HUMAN:
       opponent_type = melee.enums.ControllerType.GCN_ADAPTER
     dolphin = melee.dolphin.Dolphin(
         ai_port=port, opponent_port=opponent_port, opponent_type=opponent_type,
@@ -44,16 +58,18 @@ def getFrameAdvancer(port, opponent_port, iso_path,
     controller.connect()
     opponent_controller.connect()
     _frame_advancer =  _FrameAdvancer(gamestate, dolphin, controller,
-                                      opponent_controller)
+                                      opponent_controller, opponent)
     return _frame_advancer
 
 
 class _FrameAdvancer(object):
-    def __init__(self, gamestate, dolphin, controller, opponent_controller):
+    def __init__(self, gamestate, dolphin, controller, opponent_controller,
+                 opponent):
         self._gamestate = gamestate
         self._dolphin = dolphin
         self._controller = controller
         self._opponent_controller = opponent_controller
+        self._opponent = opponent
         self._first_match = True
 
     def get_game_state(self):
@@ -117,12 +133,13 @@ class _FrameAdvancer(object):
             if self._first_match:
               # Only set up opponent on first match. Otherwise, will switch back
               # to non-cpu player, for example.
+              make_cpu = (self._opponent == Opponent.CPU)
               melee.menuhelper.choosecharacter(character=melee.enums.Character.MARTH,
                                               gamestate=gamestate,
                                               port=dolphin.opponent_port,
                                               opponent_port=dolphin.ai_port,
                                               controller=self._opponent_controller,
-                                              make_cpu=True,
+                                              make_cpu=make_cpu,
                                               swag=False,
                                               start=True)
         #If we're at the postgame scores screen, spam START
