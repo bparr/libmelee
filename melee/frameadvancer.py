@@ -78,6 +78,9 @@ class _FrameAdvancer(object):
     def get_controller(self):
         return self._controller
 
+    def get_opponent_controller(self):
+        return self._opponent_controller
+
     def terminate_dolphin(self):
         print('Terminating dolphin.')
         self._dolphin.terminate()
