@@ -113,7 +113,7 @@ class _FrameAdvancer(object):
         dolphin = self._dolphin
         gamestate.step()
         if(gamestate.processingtime * 1000 > 12):
-            print("WARNING: Last frame took " + str(gamestate.processingtime*1000) + "ms to process.")
+            print("WARNING: Last frame took " + str(gamestate.processingtime*1000) + "ms to process.", gamestate.frame)
             sys.stdout.flush()
 
         #What menu are we in?
