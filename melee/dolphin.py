@@ -108,7 +108,7 @@ class Dolphin:
         #Enable Cheats
         config.set("Core", 'enablecheats', "True")
         config.set("Core", 'emulationspeed',
-            '0.50000000' if self.unlimited_emulation_speed else '1.00000000')
+            '0.00000000' if self.unlimited_emulation_speed else '1.00000000')
         #Turn on background input so we don't need to have window focus on dolphin
         config.set("Input", 'backgroundinput', "True")
         with open(dolphinn_config_path, 'w') as dolphinfile:
