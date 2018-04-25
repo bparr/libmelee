@@ -7,9 +7,9 @@ class Dolphin:
 
     """Do a some setup of some important dolphin paths"""
     def __init__(self, ai_port, opponent_port, opponent_type, logger=None,
-                 is_20xx=False, unlimited_emulation_speed=False):
+                 is_20xx=False, emulation_speed=1.0):
         self.is_20xx = is_20xx
-        self.unlimited_emulation_speed = unlimited_emulation_speed
+        self.emulation_speed = emulation_speed
         self.ai_port = ai_port
         self.opponent_port = opponent_port
         self.logger = logger
@@ -107,8 +107,7 @@ class Dolphin:
         config.set("Core", 'SIDevice'+str(port-1), controllertype.value)
         #Enable Cheats
         config.set("Core", 'enablecheats', "True")
-        config.set("Core", 'emulationspeed',
-            '0.50000000' if self.unlimited_emulation_speed else '1.00000000')
+        config.set("Core", 'emulationspeed', str(self.emulation_speed))
         #Turn on background input so we don't need to have window focus on dolphin
         config.set("Input", 'backgroundinput', "True")
         with open(dolphinn_config_path, 'w') as dolphinfile:
