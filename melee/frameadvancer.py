@@ -107,6 +107,11 @@ class _FrameAdvancer(object):
         while not self._step_helper():
             pass
 
+        self._controller.empty_input()
+        self._controller.flush()
+        self._opponent_controller.empty_input()
+        self._opponent_controller.flush()
+
     def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
         dolphin = self._dolphin
