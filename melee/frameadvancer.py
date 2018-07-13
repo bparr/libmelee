@@ -61,6 +61,12 @@ def getFrameAdvancer(port, opponent_port, iso_path, emulation_speed=1.0,
     return _frame_advancer
 
 
+# Actions at start of every match.
+_MATCH_INTRO_ACTIONS = frozenset([melee.enums.Action.ENTRY,
+                                  melee.enums.Action.ENTRY_START,
+                                  melee.enums.Action.ENTRY_END])
+
+
 class _FrameAdvancer(object):
     def __init__(self, gamestate, dolphin, controller, opponent_controller,
                  opponent):
@@ -91,13 +97,16 @@ class _FrameAdvancer(object):
         self._opponent_controller.flush()
         return self._step_helper()
 
-    # If in a match, then spams Start+A+L+R until out of match.
-    # Returns when on first frame of next match.
-    def reset_match(self):
+    def _empty_controller_inputs(self):
         self._controller.empty_input()
         self._controller.flush()
         self._opponent_controller.empty_input()
         self._opponent_controller.flush()
+
+    # If in a match, then spams Start+A+L+R until out of match.
+    # Returns when on first frame of next match.
+    def reset_match(self, skip_match_intro=True):
+        self._empty_controller_inputs()
 
         # Get to first frame outside of a match.
         while not self._step_helper(resetting_match=True):
@@ -107,10 +116,13 @@ class _FrameAdvancer(object):
         while not self._step_helper():
             pass
 
-        self._controller.empty_input()
-        self._controller.flush()
-        self._opponent_controller.empty_input()
-        self._opponent_controller.flush()
+        self._empty_controller_inputs()
+
+        if skip_match_intro:
+            while self._gamestate.ai_state.action in _MATCH_INTRO_ACTIONS:
+                self._step_helper()
+
+        self._empty_controller_inputs()
 
     def _step_helper(self, resetting_match=False):
         gamestate = self._gamestate
