@@ -301,12 +301,11 @@ class GameState:
             temp = temp >> 24
             #This value is actually the number of jumps USED
             #   so we have to do some quick math to turn this into what we want
-            try:
-                totaljumps = int(self.characterdata[self.player[player_int].character]["Jumps"])
-                self.player[player_int].jumps_left = totaljumps - temp + 1
-            # Key error will be expected when we first start
-            except KeyError:
-                self.player[player_int].jumps_left = 1
+            # TODO use characterdata once it has all characters.
+            six_jumps = (self.player[player_int].character in
+                         [Character.KIRBY, Character.JIGGLYPUFF])
+            jumps_left = (6 if six_jumps else 2) - temp
+            self.player[player_int].jumps_left = jumps_left
             return False
         if label == "shield_size":
             self.player[player_int].shield_size = unpack('<f', mem_update[1])[0]
