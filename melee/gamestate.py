@@ -272,8 +272,7 @@ class GameState:
                 pass
             return False
         if label == "invulnerable":
-            self.player[player_int].invulnerable = unpack('<I', mem_update[1])[0]
-            self.player[player_int].invulnerable = self.player[player_int].invulnerable >> 31
+            self.player[player_int].invulnerable = bool(unpack('<I', mem_update[1])[0])
             return False
         if label == "hitlag_frames_left":
             temp = unpack('<f', mem_update[1])[0]
