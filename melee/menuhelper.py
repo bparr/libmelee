@@ -14,9 +14,6 @@ import math
         to work. The match won't start otherwise."""
 def choosecharacter(character, gamestate, port, opponent_port, controller,
                     start=False, make_cpu=False, is_20xx=False):
-    if gamestate.frame > 240:
-      raise Exception('Taking too long to select characters')
-
     #Figure out where the character is on the select screen
     #NOTE: This assumes you have all characters unlocked
     #Positions will be totally wrong if something is not unlocked

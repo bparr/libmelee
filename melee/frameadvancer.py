@@ -142,6 +142,9 @@ class _FrameAdvancer(object):
 
         #If we're at the character select screen, choose our character
         elif gamestate.menu_state == melee.enums.Menu.CHARACTER_SELECT:
+            if self._opponent != Opponent.HUMAN and gamestate.frame > 240:
+              raise Exception('Taking too long to select characters')
+
             if self._first_match:
               melee.menuhelper.choosecharacter(character=melee.enums.Character.FOX,
                                               gamestate=gamestate,
