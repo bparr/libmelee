@@ -33,9 +33,10 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
         controller.release_button(enums.Button.BUTTON_START)
       return
 
-    if not is_20xx and gamestate.frame < 18:
-      # 20xx cursors start higher.
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
+    if gamestate.frame < 18:
+      if not is_20xx:
+        # 20xx cursors start higher.
+        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
       return
 
     if gamestate.frame < 63:
@@ -48,12 +49,12 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
         controller.press_button(enums.Button.BUTTON_A)
       elif gamestate.frame == 19 or gamestate.frame == 21:
         controller.empty_input()
-      elif gamestate.frame == 22:
+      elif gamestate.frame < 33:
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
       elif gamestate.frame == 33:
         controller.press_button(enums.Button.BUTTON_A)
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
-      elif gamestate.frame == 34:
+      elif gamestate.frame < 42:
         controller.release_button(enums.Button.BUTTON_A)
       elif gamestate.frame == 42:
         controller.empty_input()
@@ -61,9 +62,9 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
       elif gamestate.frame == 43:
         controller.release_button(enums.Button.BUTTON_A)
       # Move back to position before started setting to CPU.
-      elif gamestate.frame > 43 and gamestate.frame < 54:
+      elif gamestate.frame < 54:
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
-      elif gamestate.frame >= 54 and gamestate.frame < 63:
+      else:
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.0, 0.5)
       return
 
