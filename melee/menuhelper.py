@@ -4,16 +4,6 @@ from melee import enums
 import math
 
 
-# In 20xx, Zelda is seen as Sheik on character select screen.
-# TODO this is probably a sign that the transformed bit is different in 20xx.
-#      Investigate that memory address and all other ones.
-SHEIK_OR_ZELDA = frozenset([enums.Character.SHEIK, enums.Character.ZELDA])
-def character_selected(player_state, expected_character):
-  if player_state.character in SHEIK_OR_ZELDA:
-    return expected_character in SHEIK_OR_ZELDA
-  return player_state.character == expected_character
-
-
 """Choose a character from the character select menu
     Intended to be called each frame while in the character select menu
     character = The character you want to pick
@@ -30,24 +20,16 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
     #Figure out where the character is on the select screen
     #NOTE: This assumes you have all characters unlocked
     #Positions will be totally wrong if something is not unlocked
-    row = 2 - character.value // 9
+    row = character.value // 9
+    column = character.value % 9
+    #The random slot pushes the bottom row over a slot, so compensate for that
+    if row == 2:
+        column = column+1
+    #re-order rows so the math is simpler
+    row = 2-row
+
     ai_state = gamestate.player[port]
     opponent_state = gamestate.player[opponent_port]
-
-    if character_selected(ai_state, character):
-      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-      # For some reason, coin_down is not True when returning to character
-      # select after a match (and so characters already selected). In 20xx, the
-      # cursor will be over the "switch to CPU" button. So do not push the A
-      # button unless it looks like we are in first match (i.e. frame > 100).
-      if gamestate.frame > 100 and not ai_state.coin_down:
-        controller.press_button(enums.Button.BUTTON_A)
-
-      if start and not controller.prev.button[enums.Button.BUTTON_START]:
-        controller.press_button(enums.Button.BUTTON_START)
-      else:
-        controller.release_button(enums.Button.BUTTON_START)
-      return
 
     if gamestate.frame < 18:
       if not is_20xx:
@@ -92,12 +74,27 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
       return
 
     amount_up = 5 + 5 * row
+    amount_right = 3 + 6 * column
     if gamestate.frame <  107 + amount_up:
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
       return
 
-    # Keep moving right. Eventually will hover over character.
-    controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
+    if gamestate.frame < 107 + amount_up + amount_right:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
+      return
+
+    if gamestate.frame == 107 + amount_up + amount_right:
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
+      controller.press_button(enums.Button.BUTTON_A)
+      return
+
+    controller.release_button(enums.Button.BUTTON_A)
+    if start:
+      if controller.prev.button[enums.Button.BUTTON_START]:
+        controller.release_button(enums.Button.BUTTON_START)
+      else:
+        controller.press_button(enums.Button.BUTTON_START)
+
 
 
 """Choose a stage from the stage select menu
@@ -152,7 +149,7 @@ def choosestage(stage, gamestate, controller):
     controller.press_button(enums.Button.BUTTON_A)
 
 """Spam the start button"""
-def skippostgame(controller):
+def spamstartbutton(controller):
     # Alternate pressing start and letting go.
     # Ensure all inputs are cleared before leaving this post game menu state
     # by always clearing inputs.

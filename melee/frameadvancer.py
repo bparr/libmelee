@@ -142,14 +142,14 @@ class _FrameAdvancer(object):
 
         #If we're at the character select screen, choose our character
         elif gamestate.menu_state == melee.enums.Menu.CHARACTER_SELECT:
-            melee.menuhelper.choosecharacter(character=melee.enums.Character.FOX,
-                                            gamestate=gamestate,
-                                            port=dolphin.ai_port,
-                                            opponent_port=dolphin.opponent_port,
-                                            controller=self._controller,
-                                            start=True,
-                                            is_20xx=dolphin.is_20xx)
             if self._first_match:
+              melee.menuhelper.choosecharacter(character=melee.enums.Character.FOX,
+                                              gamestate=gamestate,
+                                              port=dolphin.ai_port,
+                                              opponent_port=dolphin.opponent_port,
+                                              controller=self._controller,
+                                              start=True,
+                                              is_20xx=dolphin.is_20xx)
               # Only set up opponent on first match. Otherwise, will switch back
               # to non-cpu player, for example.
               make_cpu = (self._opponent == Opponent.CPU)
@@ -161,10 +161,13 @@ class _FrameAdvancer(object):
                                               make_cpu=make_cpu,
                                               start=True,
                                               is_20xx=dolphin.is_20xx)
+            else:
+              melee.menuhelper.spamstartbutton(self._controller)
+              self._opponent_controller.empty_input()
         #If we're at the postgame scores screen, spam START
         elif gamestate.menu_state == melee.enums.Menu.POSTGAME_SCORES:
-            melee.menuhelper.skippostgame(controller=self._controller)
-            melee.menuhelper.skippostgame(controller=self._opponent_controller)
+            melee.menuhelper.spamstartbutton(self._controller)
+            melee.menuhelper.spamstartbutton(self._opponent_controller)
         #If we're at the stage select screen, choose a stage
         elif gamestate.menu_state == melee.enums.Menu.STAGE_SELECT:
             self._first_match = False
