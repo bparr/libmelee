@@ -3,6 +3,17 @@
 from melee import enums
 import math
 
+
+# In 20xx, Zelda is seen as Sheik on character select screen.
+# TODO this is probably a sign that the transformed bit is different in 20xx.
+#      Investigate that memory address and all other ones.
+SHEIK_OR_ZELDA = frozenset([enums.Character.SHEIK, enums.Character.ZELDA])
+def character_selected(player_state, expected_character):
+  if player_state.character in SHEIK_OR_ZELDA:
+    return expected_character in SHEIK_OR_ZELDA
+  return player_state.character == expected_character
+
+
 """Choose a character from the character select menu
     Intended to be called each frame while in the character select menu
     character = The character you want to pick
@@ -23,9 +34,14 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
     ai_state = gamestate.player[port]
     opponent_state = gamestate.player[opponent_port]
 
-    if ai_state.character == character:
+    if character_selected(ai_state, character):
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-      controller.press_button(enums.Button.BUTTON_A)
+      # For some reason, coin_down is not True when returning to character
+      # select after a match (and so characters already selected). In 20xx, the
+      # cursor will be over the "switch to CPU" button. So do not push the A
+      # button unless it looks like we are in first match (i.e. frame > 100).
+      if gamestate.frame > 100 and not ai_state.coin_down:
+        controller.press_button(enums.Button.BUTTON_A)
 
       if start and not controller.prev.button[enums.Button.BUTTON_START]:
         controller.press_button(enums.Button.BUTTON_START)
