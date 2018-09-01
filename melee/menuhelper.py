@@ -38,37 +38,32 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
       return
 
-    if gamestate.frame == 18:
-      controller.empty_input()
+    if gamestate.frame < 63:
+      if not make_cpu:
+        # Wait during "make cpu" phase of character selection.
+        controller.empty_input()
+        return
 
-    if make_cpu and gamestate.frame < 44:
       if gamestate.frame == 18 or gamestate.frame == 20:
         controller.press_button(enums.Button.BUTTON_A)
       elif gamestate.frame == 19 or gamestate.frame == 21:
         controller.empty_input()
       elif gamestate.frame == 22:
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.0)
-      elif make_cpu and gamestate.frame == 33:
+      elif gamestate.frame == 33:
         controller.press_button(enums.Button.BUTTON_A)
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
-      elif make_cpu and gamestate.frame == 34:
+      elif gamestate.frame == 34:
         controller.release_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 42:
+      elif gamestate.frame == 42:
         controller.empty_input()
         controller.press_button(enums.Button.BUTTON_A)
-      elif make_cpu and gamestate.frame == 43:
+      elif gamestate.frame == 43:
         controller.release_button(enums.Button.BUTTON_A)
-      return
-
-    if gamestate.frame < 63:
-      if not make_cpu:
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
-        return
-
       # Move back to position before started setting to CPU.
-      if gamestate.frame < 54:
+      elif gamestate.frame > 43 and gamestate.frame < 54:
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
-      else:
+      elif gamestate.frame >= 54 and gamestate.frame < 63:
         controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.0, 0.5)
       return
 
@@ -84,6 +79,7 @@ def choosecharacter(character, gamestate, port, opponent_port, controller,
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
       return
 
+    # Keep moving right. Eventually will hover over character.
     controller.tilt_analog(enums.Button.BUTTON_MAIN, 1.0, 0.5)
 
 
