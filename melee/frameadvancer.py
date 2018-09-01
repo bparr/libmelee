@@ -40,7 +40,7 @@ def getFrameAdvancer(port, opponent_port, iso_path, emulation_speed=1.0,
       opponent_type = melee.enums.ControllerType.GCN_ADAPTER
     dolphin = melee.dolphin.Dolphin(
         ai_port=port, opponent_port=opponent_port, opponent_type=opponent_type,
-        emulation_speed=emulation_speed)
+        emulation_speed=emulation_speed, is_20xx=('20XX' in iso_path.upper()))
     gamestate = melee.gamestate.GameState(dolphin)
     controller = melee.controller.Controller(port=port, dolphin=dolphin)
     opponent_controller = melee.controller.Controller(port=opponent_port,
@@ -148,7 +148,8 @@ class _FrameAdvancer(object):
                                             opponent_port=dolphin.opponent_port,
                                             controller=self._controller,
                                             swag=False,
-                                            start=True)
+                                            start=True,
+                                            is_20xx=dolphin.is_20xx)
             if self._first_match:
               # Only set up opponent on first match. Otherwise, will switch back
               # to non-cpu player, for example.
@@ -160,7 +161,8 @@ class _FrameAdvancer(object):
                                               controller=self._opponent_controller,
                                               make_cpu=make_cpu,
                                               swag=False,
-                                              start=True)
+                                              start=True,
+                                              is_20xx=dolphin.is_20xx)
         #If we're at the postgame scores screen, spam START
         elif gamestate.menu_state == melee.enums.Menu.POSTGAME_SCORES:
             melee.menuhelper.skippostgame(controller=self._controller)

@@ -21,8 +21,8 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
     ai_state = gamestate.player[port]
     opponent_state = gamestate.player[opponent_port]
 
-    if is_20xx:
-      raise Exception('20XX character selection is not implemented yet.')
+    #if is_20xx:
+    #  raise Exception('20XX character selection is not implemented yet.')
 
     if not is_20xx and gamestate.frame < 18:
       # 20xx cursors start higher.
@@ -49,6 +49,32 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
       elif make_cpu and gamestate.frame == 43:
         controller.release_button(enums.Button.BUTTON_A)
       return
+
+
+    if is_20xx:
+      if gamestate.frame < 63:
+        if not make_cpu:
+          controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
+          return
+
+        # Move back to position before started setting to CPU.
+        if gamestate.frame < 54:
+          controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 1.0)
+        else:
+          controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.0, 0.5)
+        return
+
+      # Two frames for P1 to move all the way left.
+      # Fourteen frames to move left by one player. So P2=16, P3=30, P4=44
+      # frames total to move all the way left.
+      if gamestate.frame < 63 + 44:
+        controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.0, 0.5)
+        return
+
+
+      controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
+      return
+
 
     row = character.value // 9
     column = character.value % 9
