@@ -51,6 +51,16 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
       return
 
 
+
+    row = character.value // 9
+    column = character.value % 9
+    #The random slot pushes the bottom row over a slot, so compensate for that
+    if row == 2:
+        column = column+1
+    #re-order rows so the math is simpler
+    row = 2-row
+
+
     if is_20xx:
       if gamestate.frame < 63:
         if not make_cpu:
@@ -75,20 +85,6 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
       controller.tilt_analog(enums.Button.BUTTON_MAIN, 0.5, 0.5)
       return
 
-
-    row = character.value // 9
-    column = character.value % 9
-    #The random slot pushes the bottom row over a slot, so compensate for that
-    if row == 2:
-        column = column+1
-    #re-order rows so the math is simpler
-    row = 2-row
-
-    #Go to the random character
-    if swag:
-        row = 0
-        column = 0
-
     #Height starts at 1, plus half a box height, plus the number of rows
     target_y = 1 + 3.5 + (row * 7.0)
     #Starts at -32.5, plus half a box width, plus the number of columns
@@ -96,34 +92,6 @@ def choosecharacter(character, gamestate, port, opponent_port, controller, swag=
     target_x = -32.5 + 3.5 + (column * 7.0)
     #Wiggle room in positioning character
     wiggleroom = 1.5
-
-    # We are already set, so let's taunt our opponent
-    if ai_state.character == character and swag and not start:
-        delta_x = 3 * math.cos(gamestate.frame / 1.5)
-        delta_y = 3 * math.sin(gamestate.frame / 1.5)
-
-        target_x = opponent_state.cursor_x + delta_x
-        target_y = opponent_state.cursor_y + delta_y
-
-        diff_x = abs(target_x - ai_state.cursor_x)
-        diff_y = abs(target_y - ai_state.cursor_y)
-        larger_magnitude = max(diff_x, diff_y)
-
-        # Scale down values to between 0 and 1
-        x = diff_x / larger_magnitude
-        y = diff_y / larger_magnitude
-
-        # Now scale down to be between .5 and 1
-        if ai_state.cursor_x < target_x:
-            x = (x/2) + 0.5
-        else:
-            x = 0.5 - (x/2)
-        if ai_state.cursor_y < target_y:
-            y = (y/2) + 0.5
-        else:
-            y = 0.5 - (y/2)
-        controller.tilt_analog(enums.Button.BUTTON_MAIN, x, y)
-        return
 
     #We want to get to a state where the cursor is NOT over the character,
     # but it's selected. Thus ensuring the token is on the character

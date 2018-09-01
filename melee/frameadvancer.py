@@ -147,7 +147,6 @@ class _FrameAdvancer(object):
                                             port=dolphin.ai_port,
                                             opponent_port=dolphin.opponent_port,
                                             controller=self._controller,
-                                            swag=False,
                                             start=True,
                                             is_20xx=dolphin.is_20xx)
             if self._first_match:
@@ -160,7 +159,6 @@ class _FrameAdvancer(object):
                                               opponent_port=dolphin.ai_port,
                                               controller=self._opponent_controller,
                                               make_cpu=make_cpu,
-                                              swag=False,
                                               start=True,
                                               is_20xx=dolphin.is_20xx)
         #If we're at the postgame scores screen, spam START
