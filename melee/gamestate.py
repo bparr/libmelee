@@ -25,6 +25,7 @@ class GameState:
     frametimestamp = 0.0
 
     def __init__(self, dolphin):
+        self.logger = dolphin.logger
         #Dict with key of address, and value of (name, player)
         self.locations = dict()
         path = os.path.dirname(os.path.realpath(__file__))
